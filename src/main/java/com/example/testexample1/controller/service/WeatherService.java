@@ -4,7 +4,8 @@ import com.example.testexample1.model.Weather;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,34 +14,31 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
+// Для работы (мне надо, заметки не нашел):
+// 1. Контроллер по геокоординатам +
+// 2. Вынести как поле в класс, инициализировать через констурктор +
+// 3. Распарсить json +
+// 4. Вывести объект на страницу НА РУССКОМ (на html) +
+// 5. Прикрутить сваггер (полноценное RESTfull api) +
+// 6. Нарисовать иконку weatherapi, которая хранится в запросе
+// 7. Попробовать thymeleaf (подключить, сделать контроллер и сделать одну страничку) +
+// 8. Попробовать сделать снова через @Bean +
+
 @Service
 public class WeatherService {
+
+    Logger log = LoggerFactory.getLogger(WeatherService.class);
 
     @Value("${key_api}")
     public String key;
 
-    @Autowired
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    public String result = null;
-
-    // Для работы (мне надо, заметки не нашел):
-    // 1. Контроллер по геокоординатам +
-    // 2. Вынести как поле в класс, инициализировать через констурктор +
-    // 3. Распарсить json +
-    // 4. Вывести объект на страницу НА РУССКОМ (на html) +
-    // 5. Прикрутить сваггер (полноценное RESTfull api) +
-    // 6. Нарисовать иконку weatherapi, которая хранится в запросе
-    // 7. Попробовать thymeleaf (подключить, сделать контроллер и сделать одну страничку) +
-    // 8. Попробовать сделать снова через @Bean +
-
-
-
+    private String result = null;
     private final List<String> forecastList;
 
-    public WeatherService(RestTemplate restTemplate, RestTemplate restTemplate1){
-        this.restTemplate = restTemplate;
+    public WeatherService(){
+        this.restTemplate = new RestTemplate();
         this.forecastList = new ArrayList<>();
     }
 
