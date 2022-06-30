@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+    <!--/*@thymesVar id="weather" type="com.example.testexample1.model.Weather"*/-->
+    <p th:text="${weather.city} + ' , ' + ${weather.country}">ssss</p>
+    <p th:text="'Температура:' + ${weather.temp} + ' по цельсию'">ssss</p>
+    <p th:text="'Погода:' +  ${weather.description}">ssss</p>
+    <p th:text="'Мин температура:' + ${weather.temp_min} + ' по цельсию'">ssss</p>
+    <p th:text="'Макс температура: ' + ${weather.temp_max} + ' по цельсию'">ssss</p>
+    <p th:text="'Скорость ветра: ' + ${weather.wind_speed} + ' м/с'">ssss</p>
+    <img th:src="'http://openweathermap.org/img/w/' + ${weather.image} + '.png'">
+
+
+</body>
+</html>
