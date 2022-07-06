@@ -37,4 +37,25 @@ public class WeatherControllerTest {
         }
 
     }
+
+    @Test
+    public void getCoordinateTest(){
+
+        String result;
+        String cityName = "Perm";
+        try {
+            result = weatherService.getCoordinate(cityName);
+            assertTrue(result.contains(String.valueOf(cityName)));
+            /*
+            if(true || result==null || !result.contains(String.valueOf(trueResult))) {
+                throw new Exception("City Id не совпали");
+            }else {
+                log.debug("City Id found");
+            }
+             */
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }
