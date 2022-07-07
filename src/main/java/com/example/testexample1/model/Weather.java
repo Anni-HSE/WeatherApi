@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Weather implements Serializable {
 
+    public int cityId;
     public String description;
     public double temp;
     public double temp_min;

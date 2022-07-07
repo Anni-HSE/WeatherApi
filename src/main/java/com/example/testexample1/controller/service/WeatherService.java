@@ -37,6 +37,8 @@ public class WeatherService {
     private String result = null;
     private final List<String> forecastList;
 
+
+
     public WeatherService(){
         this.restTemplate = new RestTemplate();
         this.forecastList = new ArrayList<>();
