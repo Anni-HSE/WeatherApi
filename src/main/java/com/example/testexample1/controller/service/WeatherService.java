@@ -8,22 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-
-// Для работы (мне надо, заметки не нашел):
-// 1. Контроллер по геокоординатам +
-// 2. Вынести как поле в класс, инициализировать через констурктор +
-// 3. Распарсить json +
-// 4. Вывести объект на страницу НА РУССКОМ (на html) +
-// 5. Прикрутить сваггер (полноценное RESTfull api) +
-// 6. Нарисовать иконку weatherapi, которая хранится в запросе
-// 7. Попробовать thymeleaf (подключить, сделать контроллер и сделать одну страничку) +
-// 8. Попробовать сделать снова через @Bean +
 
 @Service
 public class WeatherService {
@@ -36,35 +27,45 @@ public class WeatherService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private String result = null;
-    private final List<String> forecastList;
 
     private final WeatherServiceImpl weatherServiceImpl;
 
     public WeatherService(WeatherServiceImpl weatherServiceImpl){
         this.weatherServiceImpl = weatherServiceImpl;
         this.restTemplate = new RestTemplate();
-        this.forecastList = new ArrayList<>();
     }
 
-    public List<String> getForecastList(){
-        return this.forecastList;
+    public List<Weather> getAll(){
+        return weatherServiceImpl.getAll();
     }
 
-    public String getWeather(int cityId) throws JsonProcessingException {
-
+    public Weather addForecast(int cityId) throws JsonProcessingException {
 
         ResponseEntity<String> response = restTemplate.getForEntity("https://api.openweathermap.org/data/2.5/weather?id={city id}&appid={API key}&units=metric&lang=ru",
                 String.class, cityId, "3efd691599b77b7209f06b0e13067673");
 
-        result = restTemplate.getForObject("https://api.openweathermap.org/data/2.5/weather?id={city id}&appid={API key}",
-               String.class, cityId, "3efd691599b77b7209f06b0e13067673");
+        Weather weather = new Weather();
 
-        weatherServiceImpl.add(getWeather(response));
-        // forecastList.add(result);
+        JsonNode root = objectMapper.readTree(response.getBody());
+        weather.description = root.path("weather").get(0).path("description").asText();
+        weather.temp = Double.parseDouble(root.path("main").path("temp").asText());
+        weather.temp_min = Double.parseDouble(root.path("main").path("temp_min").asText());
+        weather.temp_max = Double.parseDouble(root.path("main").path("temp_max").asText());
+        weather.wind_speed = Double.parseDouble(root.path("wind").path("speed").asText());
+        weather.country = root.path("sys").path("country").asText();
+        weather.city = root.path("name").asText();
+        weather.image = weather.description = root.path("weather").get(0).path("icon").asText();
 
-        // return convert(response);
 
-        return result;
+        if (weather != new Weather()) {
+            weatherServiceImpl.add(weather);
+        }
+
+        return weather;
+    }
+
+    public List<Weather> getWeatherByCityId (int cityId) {
+        return weatherServiceImpl.getLastWeatherByCityId(cityId);
     }
 
     public Weather getObjectWeather(int cityId) throws JsonProcessingException {
@@ -92,7 +93,6 @@ public class WeatherService {
         try {
             result = (String) restTemplate.getForObject("http://api.openweathermap.org/geo/1.0/direct?q={city name}&limit=5&appid={API key}&units=metric",
                     String.class, cityName, "3efd691599b77b7209f06b0e13067673");
-            forecastList.add(result);
         }
         catch (Exception e){
 
@@ -107,7 +107,7 @@ public class WeatherService {
         result = "Weather: " + String.valueOf(root.path("weather").get(0).path("main").asText()) + "\n" +
                  "Temp: " + String.valueOf(root.path("main").path("temp").asDouble()) + "\n" +
                  "Feels Like: " + String.valueOf(root.path("main").path("feels_like").asDouble()) + "\n" +
-                 "Speed: " + String.valueOf(root.path("wind").path("speed").asDouble()) + "\n";
+                 "Wind speed: " + String.valueOf(root.path("wind").path("speed").asDouble()) + "\n";
 
         return result;
     }

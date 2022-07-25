@@ -5,11 +5,10 @@ import java.io.Serializable;
 
 @Entity
 //@Table(name = "")
-public class Weather implements Serializable {
+public class Weather implements  Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@Column(name = "sds")
     public int id;
 
     public int cityId;
@@ -29,4 +28,24 @@ public class Weather implements Serializable {
     public String city;
 
     public String image;
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public double getTemp() {
+        return temp;
+    }
+
+    public double getWindSpeed() {
+        return wind_speed;
+    }
 }

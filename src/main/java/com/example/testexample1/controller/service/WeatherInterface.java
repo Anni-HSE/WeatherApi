@@ -11,4 +11,6 @@ public interface WeatherInterface {
     Weather getOne(int cityId);
 
     void add(Weather weather);
+
+    List<Weather> getLastWeatherByCityId(int cityId);
 }

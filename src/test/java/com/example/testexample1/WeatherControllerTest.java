@@ -24,15 +24,8 @@ public class WeatherControllerTest {
         String result;
         int trueResult = 524901;
         try {
-            result = weatherService.getWeather(trueResult);
+            result = weatherService.addForecast(trueResult);
             assertTrue(result.contains(String.valueOf(trueResult)));
-            /*
-            if(true || result==null || !result.contains(String.valueOf(trueResult))) {
-                throw new Exception("City Id не совпали");
-            }else {
-                log.debug("City Id found");
-            }
-             */
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -47,13 +40,6 @@ public class WeatherControllerTest {
         try {
             result = weatherService.getCoordinate(cityName);
             assertTrue(result.contains(String.valueOf(cityName)));
-            /*
-            if(true || result==null || !result.contains(String.valueOf(trueResult))) {
-                throw new Exception("City Id не совпали");
-            }else {
-                log.debug("City Id found");
-            }
-             */
         } catch (Exception e) {
             e.printStackTrace();
         }
