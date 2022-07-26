@@ -41,7 +41,7 @@ public class WeatherController {
     @ApiOperation(value = "Получить последний прогноз погоды для текущего города", notes = "Получить подробную информацию на основе URL-адреса")
     @ApiImplicitParam(name = "cityId", value = "ID", required = true, dataType = "int", paramType = "path")
     public Weather getWeatherByCityId(@PathVariable int cityId) {
-        List<Weather> weathers = (List<Weather>) getWeatherByCityId(cityId);
+        List<Weather> weathers = weatherService.getWeatherByCityId(cityId);
         return weathers.get(weathers.size() - 1);
     }
 

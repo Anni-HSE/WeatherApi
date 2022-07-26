@@ -4,22 +4,17 @@ import com.example.testexample1.model.Weather;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class WeatherService {
-
-    Logger log = LoggerFactory.getLogger(WeatherService.class);
 
     @Value("${key_api}")
     public String key;
@@ -44,18 +39,7 @@ public class WeatherService {
         ResponseEntity<String> response = restTemplate.getForEntity("https://api.openweathermap.org/data/2.5/weather?id={city id}&appid={API key}&units=metric&lang=ru",
                 String.class, cityId, "3efd691599b77b7209f06b0e13067673");
 
-        Weather weather = new Weather();
-
-        JsonNode root = objectMapper.readTree(response.getBody());
-        weather.description = root.path("weather").get(0).path("description").asText();
-        weather.temp = Double.parseDouble(root.path("main").path("temp").asText());
-        weather.temp_min = Double.parseDouble(root.path("main").path("temp_min").asText());
-        weather.temp_max = Double.parseDouble(root.path("main").path("temp_max").asText());
-        weather.wind_speed = Double.parseDouble(root.path("wind").path("speed").asText());
-        weather.country = root.path("sys").path("country").asText();
-        weather.city = root.path("name").asText();
-        weather.image = weather.description = root.path("weather").get(0).path("icon").asText();
-
+        Weather weather = createWeather(response);
 
         if (weather != new Weather()) {
             weatherServiceImpl.add(weather);
@@ -70,20 +54,14 @@ public class WeatherService {
 
     public Weather getObjectWeather(int cityId) throws JsonProcessingException {
 
-        Weather weather = new Weather();
-
         ResponseEntity<String> response = restTemplate.getForEntity("https://api.openweathermap.org/data/2.5/weather?id={city id}&appid={API key}&units=metric&lang=ru",
                 String.class, cityId, "3efd691599b77b7209f06b0e13067673");
 
-        JsonNode root = objectMapper.readTree(response.getBody());
-        weather.description = root.path("weather").get(0).path("description").asText();
-        weather.temp = Double.parseDouble(root.path("main").path("temp").asText());
-        weather.temp_min = Double.parseDouble(root.path("main").path("temp_min").asText());
-        weather.temp_max = Double.parseDouble(root.path("main").path("temp_max").asText());
-        weather.wind_speed = Double.parseDouble(root.path("wind").path("speed").asText());
-        weather.country = root.path("sys").path("country").asText();
-        weather.city = root.path("name").asText();
-        weather.image = weather.description = root.path("weather").get(0).path("icon").asText();
+        Weather weather = createWeather(response);
+
+        if (weather != new Weather()) {
+            weatherServiceImpl.add(weather);
+        }
 
         return weather;
     }
@@ -100,31 +78,20 @@ public class WeatherService {
         return result;
     }
 
-    private String convert(ResponseEntity<String> response) throws JsonProcessingException {
-        String result = "";
+    private Weather createWeather(ResponseEntity<String> response) throws JsonProcessingException{
 
-        JsonNode root = objectMapper.readTree(response.getBody());
-        result = "Weather: " + String.valueOf(root.path("weather").get(0).path("main").asText()) + "\n" +
-                 "Temp: " + String.valueOf(root.path("main").path("temp").asDouble()) + "\n" +
-                 "Feels Like: " + String.valueOf(root.path("main").path("feels_like").asDouble()) + "\n" +
-                 "Wind speed: " + String.valueOf(root.path("wind").path("speed").asDouble()) + "\n";
-
-        return result;
-    }
-
-    private Weather getWeather(ResponseEntity<String> response) throws JsonProcessingException{
         Weather weather = new Weather();
-        JsonNode root = objectMapper.readTree(response.getBody());
 
-        weather.cityId = root.path("id").asInt();
-        weather.description = root.path("weather").get(0).path("description").toString();
-        weather.temp = Double.parseDouble(root.path("main").path("temp").asText());
-        weather.temp_min = Double.parseDouble(root.path("main").path("temp_min").asText());
-        weather.temp_max = Double.parseDouble(root.path("main").path("temp_max").asText());
-        weather.wind_speed = Double.parseDouble(root.path("wind").path("speed").asText());
-        weather.country = root.path("sys").path("country").asText();
-        weather.city = root.path("name").asText();
-        weather.image = weather.description = root.path("weather").get(0).path("icon").toString();
+        JsonNode root = objectMapper.readTree(response.getBody());
+        weather.setDescription(root.path("weather").get(0).path("description").asText());
+        weather.setTemp(Double.parseDouble(root.path("main").path("temp").asText()));
+        weather.setTemp_min(Double.parseDouble(root.path("main").path("temp_min").asText()));
+        weather.setTemp_max(Double.parseDouble(root.path("main").path("temp_max").asText()));
+        weather.setWind_speed(Double.parseDouble(root.path("wind").path("speed").asText()));
+        weather.setCountry(root.path("sys").path("country").asText());
+        weather.setCity(root.path("name").asText());
+        weather.setImage(root.path("weather").get(0).path("icon").asText());
+        weather.setCityId(Integer.parseInt(root.path("id").asText()));
 
         return  weather;
     }

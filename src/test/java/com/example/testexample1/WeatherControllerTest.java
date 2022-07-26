@@ -1,6 +1,7 @@
 package com.example.testexample1;
 
 import com.example.testexample1.controller.service.WeatherService;
+import com.example.testexample1.model.Weather;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,11 @@ public class WeatherControllerTest {
     @Test
     public void getForecastTest(){
 
-        String result;
+        Weather result;
         int trueResult = 524901;
         try {
             result = weatherService.addForecast(trueResult);
-            assertTrue(result.contains(String.valueOf(trueResult)));
+            assertTrue(result.getCityId() == trueResult);
         } catch (Exception e) {
             e.printStackTrace();
         }
