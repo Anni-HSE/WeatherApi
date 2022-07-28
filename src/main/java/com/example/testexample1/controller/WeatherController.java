@@ -25,8 +25,9 @@ public class WeatherController {
     private Mapper mapper;
 
     @Autowired
-    public WeatherController(WeatherService weatherService){
+    public WeatherController(WeatherService weatherService, Mapper mapper){
         this.weatherService = weatherService;
+        this.mapper = mapper;
     }
 
     @ResponseBody

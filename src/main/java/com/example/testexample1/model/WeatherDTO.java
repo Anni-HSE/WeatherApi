@@ -12,18 +12,18 @@ public class WeatherDTO implements Serializable {
     public double windSpeed;
 
     public WeatherDTO() {
-        city = "";
-        country = "";
-        description = "";
-        temp = 0;
-        windSpeed = 0;
+        this.city = "";
+        this.country = "";
+        this.description = "";
+        this.temp = 0;
+        this.windSpeed = 0;
     }
 
-    public WeatherDTO(String _city, String _country, String _description, double _temp, double _windSpeed) {
-        city = _city;
-        country = _country;
-        description = _description;
-        temp = _temp;
-        windSpeed = _windSpeed;
+    public WeatherDTO(String city, String country, String description, double temp, double windSpeed) {
+        this.city = city;
+        this.country = country;
+        this.description = description;
+        this.temp = temp;
+        this.windSpeed = windSpeed;
     }
 }
